@@ -49,6 +49,18 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Security for login & roles -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+
         <!-- Temporarily REMOVE spring-boot-starter-test,
              so we don't pull extra test libs while we debug Maven.
              We can add it back later if needed. -->
