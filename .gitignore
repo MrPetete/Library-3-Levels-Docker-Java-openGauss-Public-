@@ -1,0 +1,19 @@
+# IntelliJ / Maven / Java ignores
+target/
+.idea/
+*.iml
+.mvn/
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Env / secrets (ensure no passwords get pushed)
+application.properties
+.env
