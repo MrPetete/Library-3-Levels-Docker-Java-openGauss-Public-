@@ -32,6 +32,15 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/books", true)
+                        .successHandler((request, response, authentication) -> {
+                            // Redirect admin to /admin, regular users to /books
+                            if (authentication.getAuthorities().stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                                response.sendRedirect("/admin");
+                            } else {
+                                response.sendRedirect("/books");
+                            }
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout

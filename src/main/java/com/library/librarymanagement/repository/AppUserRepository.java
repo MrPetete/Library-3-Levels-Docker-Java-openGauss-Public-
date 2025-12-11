@@ -3,6 +3,7 @@ package com.library.librarymanagement.repository;
 import com.library.librarymanagement.model.AppUser;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,24 +14,30 @@ public class AppUserRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<AppUser> userRowMapper = (rs, rowNum) -> {
-        AppUser u = new AppUser();
-        u.setId(rs.getLong("id"));
-        u.setName(rs.getString("name"));
-        u.setEmail(rs.getString("email"));
-        u.setStudentNo(rs.getString("student_no"));
-        return u;
+    private final RowMapper<AppUser> userRowMapper = new RowMapper<AppUser>() {
+        @Override
+        @NonNull
+        public AppUser mapRow(@NonNull java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+            AppUser u = new AppUser();
+            u.setId(rs.getLong("id"));
+            u.setName(rs.getString("name"));
+            u.setEmail(rs.getString("email"));
+            u.setStudentNo(rs.getString("student_no"));
+            return u;
+        }
     };
 
     public AppUserRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @SuppressWarnings("null")
     public List<AppUser> findAll() {
         String sql = "SELECT id, name, email, student_no FROM app_user";
         return jdbcTemplate.query(sql, userRowMapper);
     }
 
+    @SuppressWarnings("null")
     public Optional<AppUser> findById(Long id) {
         String sql = "SELECT id, name, email, student_no FROM app_user WHERE id = ?";
         List<AppUser> list = jdbcTemplate.query(sql, userRowMapper, id);

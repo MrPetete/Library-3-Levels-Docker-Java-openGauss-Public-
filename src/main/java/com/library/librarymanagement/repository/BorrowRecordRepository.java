@@ -3,6 +3,7 @@ package com.library.librarymanagement.repository;
 import com.library.librarymanagement.model.BorrowRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,29 +15,35 @@ public class BorrowRecordRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<BorrowRecord> rowMapper = (rs, rowNum) -> {
-        BorrowRecord r = new BorrowRecord();
-        r.setId(rs.getLong("id"));
-        r.setUserId(rs.getLong("user_id"));
-        r.setBookId(rs.getLong("book_id"));
-        r.setBorrowDate(rs.getDate("borrow_date").toLocalDate());
-        r.setDueDate(rs.getDate("due_date").toLocalDate());
-        if (rs.getDate("return_date") != null) {
-            r.setReturnDate(rs.getDate("return_date").toLocalDate());
+    private final RowMapper<BorrowRecord> rowMapper = new RowMapper<BorrowRecord>() {
+        @Override
+        @NonNull
+        public BorrowRecord mapRow(@NonNull java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+            BorrowRecord r = new BorrowRecord();
+            r.setId(rs.getLong("id"));
+            r.setUserId(rs.getLong("user_id"));
+            r.setBookId(rs.getLong("book_id"));
+            r.setBorrowDate(rs.getDate("borrow_date").toLocalDate());
+            r.setDueDate(rs.getDate("due_date").toLocalDate());
+            if (rs.getDate("return_date") != null) {
+                r.setReturnDate(rs.getDate("return_date").toLocalDate());
+            }
+            r.setStatus(rs.getString("status"));
+            return r;
         }
-        r.setStatus(rs.getString("status"));
-        return r;
     };
 
     public BorrowRecordRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @SuppressWarnings("null")
     public List<BorrowRecord> findAll() {
         String sql = "SELECT * FROM borrow_record ORDER BY borrow_date DESC";
         return jdbcTemplate.query(sql, rowMapper);
     }
 
+    @SuppressWarnings("null")
     public Optional<BorrowRecord> findById(Long id) {
         String sql = "SELECT * FROM borrow_record WHERE id = ?";
         List<BorrowRecord> list = jdbcTemplate.query(sql, rowMapper, id);
