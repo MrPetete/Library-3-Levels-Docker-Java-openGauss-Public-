@@ -2,9 +2,9 @@ This is a Library 3 Levels Management Using Java and OpenGauss and Docker
 
 Software:
 
--Database: VMware station Pro for openGauss
+Database: VMware station Pro for openGauss
 
--Web: IntellJ IDEA for Java
+Web: IntellJ IDEA for Java
 
 Front End:
 
