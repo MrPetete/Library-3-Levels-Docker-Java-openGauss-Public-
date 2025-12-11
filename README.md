@@ -1,14 +1,17 @@
 This is a Library 3 Levels Management Using Java and OpenGauss and Docker
+
 Software:
 -Database: VMware station Pro for openGauss
 -Web: IntellJ IDEA for Java
 Front End:
 -Thymeleaf- easy to integrate
 -HTML
+
 Back End:
 -Java 17
 -Maven
 -Spring Boot
+
 Database:
 -openGauss - extracted from dbsvr-1-openGauss-OK
 -JDBC- for communicate with the database
