@@ -31,13 +31,26 @@
         <tbody>
         <tr th:each="record : ${borrows}">
             <td th:text="${record.id}">1</td>
-            <!-- Show something like: Alice (20230001) -->
-            <td th:text="${userMap[record.userId].name}">Alice</td>
+            <td>
+                <span th:if="${userMap[record.userId] != null}">
+                    <span th:text="${userMap[record.userId].name}">User Name</span>
+                    <small class="text-muted"
+                          th:text="'(' + ${userMap[record.userId].studentNo} + ')'">(12345)</small>
+                </span>
+                <span th:if="${userMap[record.userId] == null}" class="text-muted">
+                    User ID: <span th:text="${record.userId}">1</span>
+                </span>
+            </td>
 
-
-            <!-- Show book title -->
-            <td th:text="${bookMap[record.bookId].title}">
-                The Great Gatsby
+            <td>
+                <span th:if="${bookMap[record.bookId] != null}">
+                    <strong th:text="${bookMap[record.bookId].title}">Book Title</strong>
+                    <br>
+                    <small class="text-muted" th:text="'by ' + ${bookMap[record.bookId].author}">by Author</small>
+                </span>
+                <span th:if="${bookMap[record.bookId] == null}" class="text-muted">
+                    Book ID: <span th:text="${record.bookId}">1</span>
+                </span>
             </td>
 
             <td th:text="${record.borrowDate}">2025-01-01</td>

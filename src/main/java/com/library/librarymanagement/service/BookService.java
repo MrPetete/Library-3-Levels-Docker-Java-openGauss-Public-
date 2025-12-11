@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.library.librarymanagement.model.PageResult;
+
 @Service
 public class BookService {
 
@@ -18,6 +20,16 @@ public class BookService {
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    public PageResult<Book> getBooksPage(int page, int size) {
+        int safePage = Math.max(page, 1);
+        int safeSize = Math.max(size, 1);
+        long total = bookRepository.count();
+        int offset = (safePage - 1) * safeSize;
+        List<Book> items = bookRepository.findPage(safeSize, offset);
+        int totalPages = (int) Math.ceil((double) total / safeSize);
+        return new PageResult<>(items, safePage, safeSize, total, Math.max(totalPages, 1));
     }
 
     public Optional<Book> getBookById(Long id) {

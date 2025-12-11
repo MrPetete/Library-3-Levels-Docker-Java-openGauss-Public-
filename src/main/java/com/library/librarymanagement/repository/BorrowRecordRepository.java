@@ -39,8 +39,15 @@ public class BorrowRecordRepository {
 
     @SuppressWarnings("null")
     public List<BorrowRecord> findAll() {
-        String sql = "SELECT * FROM borrow_record ORDER BY borrow_date DESC";
+        // latest borrow first; tie-break by id desc for consistent ordering
+        String sql = "SELECT * FROM borrow_record ORDER BY borrow_date DESC, id DESC";
         return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    @SuppressWarnings("null")
+    public List<BorrowRecord> findPage(int limit, int offset) {
+        String sql = "SELECT * FROM borrow_record ORDER BY borrow_date DESC, id DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, rowMapper, limit, offset);
     }
 
     @SuppressWarnings("null")
@@ -73,5 +80,11 @@ public class BorrowRecordRepository {
     public int increaseAvailableCopies(Long bookId) {
         String sql = "UPDATE book SET available_copies = available_copies + 1 WHERE id = ?";
         return jdbcTemplate.update(sql, bookId);
+    }
+
+    public long count() {
+        String sql = "SELECT COUNT(*) FROM borrow_record";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return count != null ? count : 0L;
     }
 }

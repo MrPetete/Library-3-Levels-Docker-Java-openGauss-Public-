@@ -23,6 +23,7 @@ public class AppUserRepository {
             u.setName(rs.getString("name"));
             u.setEmail(rs.getString("email"));
             u.setStudentNo(rs.getString("student_no"));
+            u.setDeleted(rs.getBoolean("deleted"));
             return u;
         }
     };
@@ -33,13 +34,26 @@ public class AppUserRepository {
 
     @SuppressWarnings("null")
     public List<AppUser> findAll() {
-        String sql = "SELECT id, name, email, student_no FROM app_user";
+        String sql = "SELECT id, name, email, student_no, deleted FROM app_user WHERE deleted = false";
         return jdbcTemplate.query(sql, userRowMapper);
     }
 
     @SuppressWarnings("null")
+    public List<AppUser> findPage(int limit, int offset) {
+        String sql = "SELECT id, name, email, student_no, deleted FROM app_user " +
+                "WHERE deleted = false ORDER BY id DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, userRowMapper, limit, offset);
+    }
+
+    public long countActive() {
+        String sql = "SELECT COUNT(*) FROM app_user WHERE deleted = false";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return count != null ? count : 0L;
+    }
+
+    @SuppressWarnings("null")
     public Optional<AppUser> findById(Long id) {
-        String sql = "SELECT id, name, email, student_no FROM app_user WHERE id = ?";
+        String sql = "SELECT id, name, email, student_no, deleted FROM app_user WHERE id = ? AND deleted = false";
         List<AppUser> list = jdbcTemplate.query(sql, userRowMapper, id);
         if (list.isEmpty()) {
             return Optional.empty();
@@ -48,7 +62,7 @@ public class AppUserRepository {
     }
 
     public int save(AppUser user) {
-        String sql = "INSERT INTO app_user (name, email, student_no) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO app_user (name, email, student_no, deleted) VALUES (?, ?, ?, false)";
         return jdbcTemplate.update(sql,
                 user.getName(),
                 user.getEmail(),
@@ -56,7 +70,7 @@ public class AppUserRepository {
     }
 
     public int update(AppUser user) {
-        String sql = "UPDATE app_user SET name = ?, email = ?, student_no = ? WHERE id = ?";
+        String sql = "UPDATE app_user SET name = ?, email = ?, student_no = ? WHERE id = ? AND deleted = false";
         return jdbcTemplate.update(sql,
                 user.getName(),
                 user.getEmail(),
@@ -65,7 +79,8 @@ public class AppUserRepository {
     }
 
     public int delete(Long id) {
-        String sql = "DELETE FROM app_user WHERE id = ?";
+        // soft delete: mark as deleted to preserve FK integrity
+        String sql = "UPDATE app_user SET deleted = true WHERE id = ? AND deleted = false";
         return jdbcTemplate.update(sql, id);
     }
 }

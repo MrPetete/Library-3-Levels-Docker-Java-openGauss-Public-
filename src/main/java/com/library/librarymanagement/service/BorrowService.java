@@ -1,6 +1,7 @@
 package com.library.librarymanagement.service;
 
 import com.library.librarymanagement.model.BorrowRecord;
+import com.library.librarymanagement.model.PageResult;
 import com.library.librarymanagement.repository.BorrowRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,16 @@ public class BorrowService {
 
     public List<BorrowRecord> getAllRecords() {
         return repository.findAll();
+    }
+
+    public PageResult<BorrowRecord> getRecordsPage(int page, int size) {
+        int safePage = Math.max(page, 1);
+        int safeSize = Math.max(size, 1);
+        long total = repository.count();
+        int offset = (safePage - 1) * safeSize;
+        List<BorrowRecord> items = repository.findPage(safeSize, offset);
+        int totalPages = (int) Math.ceil((double) total / safeSize);
+        return new PageResult<>(items, safePage, safeSize, total, Math.max(totalPages, 1));
     }
 
     @Transactional

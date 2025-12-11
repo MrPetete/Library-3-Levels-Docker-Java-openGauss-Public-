@@ -41,6 +41,18 @@ public class BookRepository {
     }
 
     @SuppressWarnings("null")
+    public List<Book> findPage(int limit, int offset) {
+        String sql = "SELECT id, title, author, category_id, isbn, total_copies, available_copies " +
+                "FROM book ORDER BY id DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, bookRowMapper, limit, offset);
+    }
+
+    public long count() {
+        String sql = "SELECT COUNT(*) FROM book";
+        return jdbcTemplate.queryForObject(sql, Long.class);
+    }
+
+    @SuppressWarnings("null")
     public Optional<Book> findById(Long id) {
         String sql = "SELECT id, title, author, category_id, isbn, total_copies, available_copies FROM book WHERE id = ?";
         List<Book> list = jdbcTemplate.query(sql, bookRowMapper, id);

@@ -8,4 +8,6 @@ public class AppUser {
     private String name;
     private String email;
     private String studentNo;
+    // soft-delete flag: true means user is logically removed
+    private Boolean deleted;
 }
